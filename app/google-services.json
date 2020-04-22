@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "881540538770",
+    "firebase_url": "https://doctor-sahab-ee6a5.firebaseio.com",
+    "project_id": "doctor-sahab-ee6a5",
+    "storage_bucket": "doctor-sahab-ee6a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881540538770:android:293948793ba1148918214b",
+        "android_client_info": {
+          "package_name": "com.example.doctorsahab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881540538770-kvf58fpis6k0ua27mdjv5epqd7tlgku1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.doctorsahab",
+            "certificate_hash": "fcb4f83323fe0ac64ace082a92f914bea56964b8"
+          }
+        },
+        {
+          "client_id": "881540538770-8ecnvs3jelrqgcqi6f99gq5u569qvaub.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeTWVj-PwG2XeW0VUsVSgWiwpj1jtz9cY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "881540538770-8ecnvs3jelrqgcqi6f99gq5u569qvaub.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
