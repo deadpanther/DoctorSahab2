@@ -26,4 +26,6 @@
     <string name="signup">SignUp</string>
     <string name="new_here_create_an_account_here">New Here? Create an account here!</string>
     <string name="login">Login</string>
+    <string name="don_t_have_an_account_create_one_here">Don\'t have an account? Create one here</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -26,6 +26,13 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="logout"
+        android:text="@string/logout" />
+
     <ListView
         android:id="@+id/allAppointments"
         android:layout_width="match_parent"

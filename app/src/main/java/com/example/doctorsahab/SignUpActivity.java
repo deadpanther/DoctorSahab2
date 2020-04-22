@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,22 +21,36 @@ public class SignUpActivity extends AppCompatActivity {
 
     EditText emailID, pwd;
     Button sign_button;
-    //TextView to_login;
+    TextView to_login;
     private FirebaseAuth mAuth;
 //    ProgressDialog progressDialog = new ProgressDialog(this);
 
+
+    private void checkSession() {
+        SessionManagement sessionManagement = new SessionManagement(SignUpActivity.this);
+        String userID = sessionManagement.getSession();
+
+        if(!userID.equals("NOTLOGGEDIN")){
+            moveToMainActivity();
+        }
+    }
+
+    private void moveToMainActivity() {
+        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        checkSession();
+
         mAuth = FirebaseAuth.getInstance();
         emailID = findViewById(R.id.username);
         pwd = findViewById(R.id.password);
         sign_button = findViewById(R.id.signup);
-        //progressDialog.findViewById(R.id.loading);
-        //to_login = findViewById(R.id.to_login);
         sign_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,7 +67,6 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(SignUpActivity.this,"Fields are empty", Toast.LENGTH_LONG).show();
                 }
                 else if(!email.isEmpty() && !password.isEmpty()){
-
                     mAuth.createUserWithEmailAndPassword(email,password)
                             .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -62,7 +76,12 @@ public class SignUpActivity extends AppCompatActivity {
                             }
                             else{
                                 Toast.makeText(SignUpActivity.this,"User Signed Up!", Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                                String userID = mAuth.getCurrentUser().getUid();
+                                String emailID = mAuth.getCurrentUser().getEmail();
+                                User user = new User(userID,emailID);
+                                SessionManagement sessionManagement = new SessionManagement(SignUpActivity.this);
+                                sessionManagement.saveSession(user);
+                                moveToMainActivity();
                             }
                         }
                     });
@@ -72,14 +91,10 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
-/*
-        to_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(i);
-            }
-        });
-        */
+    }
+
+    public void onClick(View view) {
+        Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+        startActivity(i);
     }
 }

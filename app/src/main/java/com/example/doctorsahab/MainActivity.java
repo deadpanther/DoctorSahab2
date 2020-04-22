@@ -2,24 +2,32 @@ package com.example.doctorsahab;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,13 +52,29 @@ public class MainActivity extends AppCompatActivity {
     final List<String> list = new ArrayList<>();
     appointmentDetails user = new appointmentDetails();
 
+
+    private void checkSession(){
+        //check if user is logged in
+        //if user is logged in --> move to mainActivity
+
+        SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
+        String userID = sessionManagement.getSession();
+
+        if(userID.equals("NOTLOGGEDIN")){
+            //user id logged in and so move to mainActivity
+            moveToLogin();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final FirebaseDatabase database = getInstance();
-        final DatabaseReference myRef = database.getReference("user");
 
+        checkSession();
+
+        final FirebaseDatabase database = getInstance();
+        final DatabaseReference myRef = database.getReference("appointments");
         Toast.makeText(MainActivity.this, "Firebase connected", Toast.LENGTH_LONG).show();
 
         final ListView allAppointments = findViewById(R.id.allAppointments);
@@ -73,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                                 adapter.setData(list);
                                 Toast.makeText(getApplicationContext(),"The appointment is cancelled",Toast.LENGTH_LONG).show();
                                 saveInfo();
+
                             }
                         })
                         .setNegativeButton("No", null)
@@ -178,6 +203,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+// Used after logout to go to the signup page
+    private void moveToLogin() {
+        Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+
+    public void logout(View view) {
+        //this method will remove session and open login screen
+        SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
+        sessionManagement.removeSession();
+        Log.i("id", sessionManagement.getSession().toString());
+
+        moveToLogin();
+    }
+
 
     class TextAdapter extends BaseAdapter
     {

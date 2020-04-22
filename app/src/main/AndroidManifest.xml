@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SignUpActivity"
+            android:name="com.example.doctorsahab.SignUpActivity"
             android:label="@string/app_name">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +20,14 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.doctorsahab.MainActivity"
             android:label="Appointments"
             android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
+            android:name="com.example.doctorsahab.LoginActivity"
+            android:label="Login">
         </activity>
     </application>
 
