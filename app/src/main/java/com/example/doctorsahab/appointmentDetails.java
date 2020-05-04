@@ -2,18 +2,25 @@ package com.example.doctorsahab;
 
 public class appointmentDetails {
 
-    private String doctorName;
+    private String appointmentName;
+    private String ImageURL;
 
+    public String getImageURL() {
+        return ImageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        ImageURL = imageURL;
+    }
 
     public appointmentDetails() {
     }
 
-
-    public String getDoctorName() {
-        return doctorName;
+    public String getAppointmentName() {
+        return appointmentName;
     }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
+    public void setAppointmentName(String appointmentName) {
+        this.appointmentName = appointmentName;
     }
 }

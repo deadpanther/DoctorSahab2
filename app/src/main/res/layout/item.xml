@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="50dp">
-
+    android:layout_height="50dp"
+    android:id="@+id/parent_layout">
+<!--
     <TextView
         android:id="@+id/appointment"
         android:layout_width="match_parent"
@@ -11,4 +12,26 @@
         android:gravity="center_vertical"
         android:textColor="@color/black"
         />
-</LinearLayout>
+
+        -->
+
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/doc_image"
+        android:src="@mipmap/ic_launcher"/>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/appointment_name"
+            android:text="New Name"
+            android:textColor="#000"
+            android:layout_toRightOf="@id/doc_image"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"/>
+
+
+</RelativeLayout>

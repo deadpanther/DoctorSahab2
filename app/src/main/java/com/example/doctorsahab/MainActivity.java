@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,120 +51,74 @@ import static com.google.firebase.database.FirebaseDatabase.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    final List<String> list = new ArrayList<>();
-    appointmentDetails user = new appointmentDetails();
-
+    private ArrayList<String> mImageURL = new ArrayList<>();
+    private ArrayList<String> mAppointmentName = new ArrayList<>();
+    appointmentDetails appDetails = new appointmentDetails();
 
     private void checkSession(){
-        //check if user is logged in
-        //if user is logged in --> move to mainActivity
-
         SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
         String userID = sessionManagement.getSession();
 
         if(userID.equals("NOTLOGGEDIN")){
-            //user id logged in and so move to mainActivity
             moveToLogin();
         }
     }
+
+    /*
+    private void initAppointmentValues(appointmentDetails user){
+        mAppointmentName.add(user.getAppointmentName());
+    }
+     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         checkSession();
 
         final FirebaseDatabase database = getInstance();
         final DatabaseReference myRef = database.getReference("appointments");
-        Toast.makeText(MainActivity.this, "Firebase connected", Toast.LENGTH_LONG).show();
-
-        final ListView allAppointments = findViewById(R.id.allAppointments);
-        final TextAdapter adapter = new TextAdapter();
-
-        readInfo();
-
-        adapter.setData(list);
-        allAppointments.setAdapter(adapter);
-
-        allAppointments.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id){
-                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Delete this appointment")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                list.remove(position);
-                                adapter.setData(list);
-                                Toast.makeText(getApplicationContext(),"The appointment is cancelled",Toast.LENGTH_LONG).show();
-                                saveInfo();
-
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .create();
-                        dialog.show();
-                return true;
-            }
-        });
-
-
         final Button newAppointmentButton = findViewById(R.id.bookNewAppointmentButton);
+        Toast.makeText(MainActivity.this, "Firebase connected", Toast.LENGTH_LONG).show();
+        //final RecyclerView allAppointments = findViewById(R.id.allAppointments);
+        //final RecyclerViewAdapter adapter = new RecyclerViewAdapter();
 
-        newAppointmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final EditText appointmentInput = new EditText(MainActivity.this);
-                appointmentInput.setSingleLine();
-                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Book a new appointment")
-                        .setMessage("What is the new appointment")
-                        .setView(appointmentInput)
-                        .setPositiveButton("Book an appointment", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                list.add(appointmentInput.getText().toString());
-                                user.setDoctorName(appointmentInput.getText().toString());
-                                adapter.setData(list);
-                                Toast.makeText(getApplicationContext(),"The appointment is booked",Toast.LENGTH_LONG).show();
-                                myRef.push().setValue(user);
-                                saveInfo();
-                                Toast.makeText(getApplicationContext(),"Value inserted",Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create();
-                dialog.show();
-            }
-        });
+    newAppointmentButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final EditText appointmentInput = new EditText(MainActivity.this);
+            appointmentInput.setSingleLine();
+            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Book a new appointment")
+                    .setMessage("What is the new appointment")
+                    .setView(appointmentInput)
+                    .setPositiveButton("Book an appointment", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            appDetails.setAppointmentName(appointmentInput.getText().toString());
+                            //initAppointmentValues(appDetails);
+                            Toast.makeText(getApplicationContext(),"The appointment is booked",Toast.LENGTH_LONG).show();
+                            mImageURL.add("Newval");
+                            mAppointmentName.add(appDetails.getAppointmentName());
+                            SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
+                            String userID = sessionManagement.getSession();
+                            myRef.child(userID).push().setValue(appDetails);
+                            initRecyclerView();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .create();
+            dialog.show();
+        }
+    });
 
-        final Button clearAllAppointments = findViewById(R.id.clearAllAppointments);
+    //allAppointments.setAdapter();
 
-        clearAllAppointments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Clear all the appointments?")
-                        .setMessage("Are you sure you want to clear all the appointments?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                list.clear();
-                                adapter.setData(list);
-                                saveInfo();
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .create();
-                        dialog.show();
-            }
-        });
-
+        initRecyclerView();
     }
-
-
-    private void saveInfo(){
+    /*
+    public void saveInfo(){
         try{
             File file = new File(this.getFilesDir(), "saved");
 
@@ -181,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void  readInfo(){
+    private void readInfo(){
         File file = new File(this.getFilesDir(),"saved");
         if(!file.exists()){
             return;
@@ -204,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+     */
+
 // Used after logout to go to the signup page
     private void moveToLogin() {
         Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
@@ -222,48 +180,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    class TextAdapter extends BaseAdapter
-    {
-
-        List<String> list = new ArrayList<>();
-
-        void setData(List<String> mList)
-        {
-            list.clear();
-            list.addAll(mList);
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if(convertView == null){
-                LayoutInflater inflater = (LayoutInflater)
-                        MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.item, parent, false);
-            }
-
-            final TextView textView = convertView.findViewById(R.id.appointment);
-            textView.setBackgroundColor(Color.GRAY);
-            textView.setTextColor(Color.WHITE);
-            textView.setText(list.get(position));
-
-            return convertView;
-        }
+    private void initRecyclerView(){
+        Log.d("TAGo", "initRecyclerView: inti recyclerview");
+        RecyclerView recyclerView = findViewById(R.id.allAppointments);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mImageURL,mAppointmentName);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
 }
